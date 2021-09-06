@@ -2,9 +2,13 @@
 
 #include <memory>
 #include <optional>
+#include <clu/c_str_view.h>
 
 #include "export.h"
 #include "../utils/chrono.h"
+#include "../math/linear_algebra.h"
+#include "../graphics/window.h"
+#include "../graphics/generic/render_backend.h"
 
 namespace ph
 {
@@ -28,8 +32,12 @@ namespace ph
         Duration delta_time() const { return current_update_ - last_update_; }
         float delta_time_sec() const { return to_seconds(delta_time()); }
 
+        Window& window() { return *window_; }
+        const Window& window() const { return *window_; }
+
     protected:
         virtual void update() = 0;
+        void initialize_window(clu::c_str_view title, Int2 size, RenderBackend backend);
 
     private:
         inline static Application* instance_ = nullptr;
@@ -37,6 +45,10 @@ namespace ph
         TimePoint start_time_;
         TimePoint last_update_;
         TimePoint current_update_;
+
+        std::optional<Window> window_;
+
+        void propagate_event(Event& ev);
     };
     PH_RESTORE_EXPORT_WARNING
 }

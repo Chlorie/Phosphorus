@@ -44,12 +44,27 @@ namespace ph
     namespace detail
     {
         template <typename Fn, typename Ev>
-        concept EventDispatcher =
-        std::invocable<Fn, Ev&> && clu::same_as_any_of<std::invoke_result_t<Fn, Ev&>, void, bool>;
+        concept EventDispatchable =
+        (EventTypeList::contains_v<Ev>) &&
+        std::invocable<Fn, Ev&> &&
+        clu::same_as_any_of<std::invoke_result_t<Fn, Ev&>, void, bool>;
 
+#ifdef __RESHARPER__ // TODO: Resharper doesn't short circuit concept evaluation (2021.2), remove this after it is fixed
+        template <typename Fn, typename Ev>
+        constexpr bool invocable_implies_valid_result_impl()
+        {
+            if constexpr (std::invocable<Fn, Ev&>)
+                return clu::same_as_any_of<std::invoke_result_t<Fn, Ev&>, void, bool>;
+            else
+                return true;
+        }
+        template <typename Fn, typename Ev>
+        concept InvocableImpliesValidResult = invocable_implies_valid_result_impl<Fn, Ev>();
+#else
         template <typename Fn, typename Ev>
         concept InvocableImpliesValidResult =
         (!std::invocable<Fn, Ev&>) || clu::same_as_any_of<std::invoke_result_t<Fn, Ev&>, void, bool>;
+#endif
 
         template <typename Fn, typename... Evs>
         constexpr bool void_dispatcher_impl(clu::type_list<Evs...>) noexcept
@@ -57,14 +72,12 @@ namespace ph
             return (InvocableImpliesValidResult<Fn, Evs> && ...);
         }
 
-        template <typename Fn>
-        concept VoidDispatcher = void_dispatcher_impl<Fn>(EventTypeList{});
+        template <typename Fn, typename Ev>
+        concept VoidDispatchable = std::same_as<Ev, void> && void_dispatcher_impl<Fn>(EventTypeList{});
     }
 
     template <typename Fn, typename Ev>
-    concept Dispatchable =
-    (std::same_as<Ev, void> && detail::VoidDispatcher<Fn>) ||
-    (EventTypeList::contains_v<Ev> && detail::EventDispatcher<Fn, Ev>);
+    concept Dispatchable = detail::VoidDispatchable<Fn, Ev> || detail::EventDispatchable<Fn, Ev>;
 
     class PH_API Event
     {
@@ -106,9 +119,9 @@ namespace ph
         static void dispatch_to(Fn&& invocable, Event& ev)
         {
             if constexpr (std::is_void_v<std::invoke_result_t<Fn, Ev&>>)
-                std::invoke(std::forward<Fn>(invocable), static_cast<Ev&>(ev));
+                std::invoke(std::forward<Fn>(invocable), *static_cast<Ev*>(&ev));
             else
-                ev.blocked_ = std::invoke(std::forward<Fn>(invocable), static_cast<Ev&>(ev));
+                ev.blocked_ = std::invoke(std::forward<Fn>(invocable), *static_cast<Ev*>(&ev));
         }
 
         template <typename Fn, typename... Evs>

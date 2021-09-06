@@ -2,6 +2,12 @@
 
 class Sandbox final : public ph::Application
 {
+public:
+    Sandbox()
+    {
+        initialize_window("Hello world!", { 800, 600 }, ph::RenderBackend::opengl);
+    }
+
 protected:
     void update() override
     {

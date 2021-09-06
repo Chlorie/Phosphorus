@@ -31,6 +31,9 @@ add_headers(HEADERS
     "event/mouse_events.h"
     "event/window_events.h"
 
+    "graphics/window.h"
+    "graphics/generic/render_backend.h"
+
     "input/input.h"
     "input/key.h"
     "input/mouse_button.h"
@@ -51,6 +54,8 @@ add_sources(SOURCES
     "event/key_events.cpp"
     "event/mouse_events.cpp"
     "event/window_events.cpp"
+    
+    "graphics/window.cpp"
 
     "input/key.cpp"
     "input/mouse_button.cpp"
@@ -59,6 +64,8 @@ add_sources(SOURCES
 find_package(clu CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
 
 target_sources(phosphorus PRIVATE ${HEADERS} ${SOURCES} "include/phosphorus/core/entry_point.h")
 target_set_options(phosphorus)
@@ -79,6 +86,7 @@ PUBLIC
     clu::clu
     glm::glm
     spdlog::spdlog
+    glfw glad::glad
 )
 
 target_compile_features(phosphorus PRIVATE cxx_std_20)

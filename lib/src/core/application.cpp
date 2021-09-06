@@ -2,6 +2,7 @@
 
 #include "phosphorus/core/error.h"
 #include "phosphorus/core/log.h"
+#include "phosphorus/event/window_events.h"
 
 namespace ph
 {
@@ -26,14 +27,33 @@ namespace ph
     {
         using namespace std::literals;
         static constexpr auto first_delta_time = 17ms;
+        PH_ENGINE_ASSERT(window_, "The window should be initialized before running the app");
         last_update_ = Clock::now() - first_delta_time;
-        while (true)
+        while (!window_->should_close())
         {
             current_update_ = Clock::now();
+            window_->poll_events();
             update();
             last_update_ = current_update_;
         }
     }
 
     void Application::quit() {}
+
+    void Application::initialize_window(const clu::c_str_view title, const Int2 size, const RenderBackend backend)
+    {
+        window_.emplace(title, size, backend);
+        log_engine_info("Created window {} with size {}", title, size);
+    }
+
+    void Application::propagate_event(Event& ev)
+    {
+        ev.dispatch([this](WindowCloseEvent&) { window_->close(); });
+        // ev.dispatch<WindowResizedEvent>([this](auto&) { recreate_swapchain(); });
+        // for (Layer& layer : layer_stack_ | std::views::reverse)
+        // {
+        //     layer.on_event(ev);
+        //     if (ev.blocked()) break;
+        // }
+    }
 }

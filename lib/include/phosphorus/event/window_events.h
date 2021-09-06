@@ -18,7 +18,7 @@ namespace ph
         WindowEvent() = default;
         ~WindowEvent() noexcept = default;
     };
-
+    
     class PH_API WindowCloseEvent final : public WindowEvent
     {
     public:
