@@ -1,14 +1,14 @@
 #pragma once
 
-#include <memory>
 #include <optional>
 #include <clu/c_str_view.h>
 
 #include "export.h"
-#include "../utils/chrono.h"
 #include "../math/linear_algebra.h"
+#include "../layer/layer_stack.h"
 #include "../graphics/window.h"
 #include "../graphics/generic/render_backend.h"
+#include "../utils/chrono.h"
 
 namespace ph
 {
@@ -34,6 +34,8 @@ namespace ph
 
         Window& window() { return *window_; }
         const Window& window() const { return *window_; }
+        LayerStack& layer_stack() { return layer_stack_; }
+        const LayerStack& layer_stack() const { return layer_stack_; }
 
     protected:
         virtual void update() = 0;
@@ -47,6 +49,7 @@ namespace ph
         TimePoint current_update_;
 
         std::optional<Window> window_;
+        LayerStack layer_stack_;
 
         void propagate_event(Event& ev);
     };

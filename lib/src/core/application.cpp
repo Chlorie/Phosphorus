@@ -28,17 +28,20 @@ namespace ph
         using namespace std::literals;
         static constexpr auto first_delta_time = 17ms;
         PH_ENGINE_ASSERT(window_, "The window should be initialized before running the app");
+        window_->set_event_callback(std::bind_front(&Application::propagate_event, this));
         last_update_ = Clock::now() - first_delta_time;
         while (!window_->should_close())
         {
             current_update_ = Clock::now();
             window_->poll_events();
             update();
+            for (Layer& layer : layer_stack_) layer.on_update();
+            window_->update();
             last_update_ = current_update_;
         }
     }
 
-    void Application::quit() {}
+    void Application::quit() { window_->close(); }
 
     void Application::initialize_window(const clu::c_str_view title, const Int2 size, const RenderBackend backend)
     {
@@ -50,10 +53,10 @@ namespace ph
     {
         ev.dispatch([this](WindowCloseEvent&) { window_->close(); });
         // ev.dispatch<WindowResizedEvent>([this](auto&) { recreate_swapchain(); });
-        // for (Layer& layer : layer_stack_ | std::views::reverse)
-        // {
-        //     layer.on_event(ev);
-        //     if (ev.blocked()) break;
-        // }
+        for (Layer& layer : layer_stack_ | std::views::reverse)
+        {
+            layer.on_event(ev);
+            if (ev.blocked()) break;
+        }
     }
 }

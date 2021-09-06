@@ -38,6 +38,9 @@ add_headers(HEADERS
     "input/key.h"
     "input/mouse_button.h"
 
+    "layer/layer.h"
+    "layer/layer_stack.h"
+
     "math/angle.h"
     "math/color.h"
     "math/linear_algebra.h"
@@ -59,6 +62,8 @@ add_sources(SOURCES
 
     "input/key.cpp"
     "input/mouse_button.cpp"
+
+    "layer/layer_stack.cpp"
 )
 
 find_package(clu CONFIG REQUIRED)

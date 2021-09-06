@@ -10,6 +10,7 @@
 
 namespace ph
 {
+    PH_SUPPRESS_EXPORT_WARNING
     class PH_API Window final
     {
     public:
@@ -20,7 +21,7 @@ namespace ph
         Window& operator=(const Window&) = delete;
         Window& operator=(Window&& other) noexcept;
         void swap(Window& other) noexcept;
-        friend void swap(Window& lhs, Window& rhs) noexcept { lhs.swap(rhs); }
+        PH_API friend void swap(Window& lhs, Window& rhs) noexcept { lhs.swap(rhs); }
 
         void close();
         bool should_close() const;
@@ -42,4 +43,5 @@ namespace ph
 
         void set_glfw_callbacks() const;
     };
+    PH_RESTORE_EXPORT_WARNING
 }

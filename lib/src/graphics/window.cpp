@@ -40,6 +40,7 @@ namespace ph
         glfwWindowHint(GLFW_RESIZABLE, true);
         window_ = glfwCreateWindow(size.x, size.y, title.c_str(), nullptr, nullptr);
         glfwSetWindowUserPointer(cast_window(window_), this);
+        set_glfw_callbacks();
     }
 
     Window::~Window() noexcept
