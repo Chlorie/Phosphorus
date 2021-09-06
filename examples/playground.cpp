@@ -1,5 +1,4 @@
-#include <phosphorus/core/entry_point.h>
-#include <phosphorus/core/log.h>
+#include <phosphorus/phosphorus.h>
 
 class Sandbox final : public ph::Application
 {

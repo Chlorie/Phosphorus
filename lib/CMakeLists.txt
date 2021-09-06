@@ -17,21 +17,47 @@ endfunction ()
 
 add_headers(HEADERS
     # Header files here (relative to ./include/phosphorus/)
+    "phosphorus.h"
+
     "core/application.h"
     "core/entry_point.h"
     "core/error.h"
     "core/export.h"
     "core/log.h"
 
+    "event/event.h"
+    "event/events_fwd.h"
+    "event/key_events.h"
+    "event/mouse_events.h"
+    "event/window_events.h"
+
+    "input/input.h"
+    "input/key.h"
+    "input/mouse_button.h"
+
+    "math/angle.h"
+    "math/color.h"
+    "math/linear_algebra.h"
+
     "utils/chrono.h"
+    "utils/format.h"
 )
 add_sources(SOURCES
     # Source files here (relative to ./src/)
     "core/application.cpp"
     "core/error.cpp"
     "core/log.cpp"
+
+    "event/key_events.cpp"
+    "event/mouse_events.cpp"
+    "event/window_events.cpp"
+
+    "input/key.cpp"
+    "input/mouse_button.cpp"
 )
 
+find_package(clu CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
 target_sources(phosphorus PRIVATE ${HEADERS} ${SOURCES} "include/phosphorus/core/entry_point.h")
@@ -50,6 +76,8 @@ PUBLIC
 )
 target_link_libraries(phosphorus
 PUBLIC
+    clu::clu
+    glm::glm
     spdlog::spdlog
 )
 

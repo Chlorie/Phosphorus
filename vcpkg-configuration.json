@@ -3,7 +3,7 @@
         {
             "kind": "git",
             "repository": "https://github.com/Chlorie/vcpkg-ports.git",
-            "baseline": "4320cae71511c3ae0f8873c8d5359f08f112cc54",
+            "baseline": "40a173e98a6ee0e03d121fcc5bdfe69b3659a20b",
             "packages": [
                 "clu"
             ]
