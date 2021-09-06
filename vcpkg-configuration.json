@@ -1,0 +1,12 @@
+{
+    "registries": [
+        {
+            "kind": "git",
+            "repository": "https://github.com/Chlorie/vcpkg-ports.git",
+            "baseline": "4320cae71511c3ae0f8873c8d5359f08f112cc54",
+            "packages": [
+                "clu"
+            ]
+        }
+    ]
+}

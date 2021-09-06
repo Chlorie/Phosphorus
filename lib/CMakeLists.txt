@@ -17,21 +17,30 @@ endfunction ()
 
 add_headers(HEADERS
     # Header files here (relative to ./include/phosphorus/)
-    "export.h"
+    "core/application.h"
+    "core/entry_point.h"
+    "core/error.h"
+    "core/export.h"
+    "core/log.h"
+
+    "utils/chrono.h"
 )
 add_sources(SOURCES
     # Source files here (relative to ./src/)
+    "core/application.cpp"
+    "core/error.cpp"
+    "core/log.cpp"
 )
 
-# find_package(fmt CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 
-target_sources(phosphorus PRIVATE ${HEADERS} ${SOURCES})
+target_sources(phosphorus PRIVATE ${HEADERS} ${SOURCES} "include/phosphorus/core/entry_point.h")
 target_set_options(phosphorus)
 
 if (BUILD_SHARED_LIBS)
     target_compile_definitions(phosphorus
-        PRIVATE PHOS_EXPORT_SHARED
-        PUBLIC PHOS_BUILD_SHARED)
+        PRIVATE PH_EXPORT_SHARED
+        PUBLIC PH_BUILD_SHARED)
 endif ()
 
 target_include_directories(phosphorus
@@ -41,8 +50,10 @@ PUBLIC
 )
 target_link_libraries(phosphorus
 PUBLIC
-# fmt::fmt
+    spdlog::spdlog
 )
+
+target_compile_features(phosphorus PRIVATE cxx_std_20)
 
 if (ENABLE_INSTALL)
     include(CMakePackageConfigHelpers)

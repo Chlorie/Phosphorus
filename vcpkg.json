@@ -1,5 +1,19 @@
 {
-    "dependencies": [],
     "name": "phosphorus",
-    "version-string": "0.1.0"
+    "version-string": "0.1.0",
+    "dependencies": [
+        "clu",
+        "spdlog",
+        "glm",
+        "glfw3",
+        "glad",
+        {
+            "name": "imgui",
+            "features": [
+                "docking-experimental",
+                "win32-binding",
+                "glfw-binding"
+            ]
+        }
+    ]
 }

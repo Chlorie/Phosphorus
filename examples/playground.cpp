@@ -1,7 +1,13 @@
-#include <iostream>
+#include <phosphorus/core/entry_point.h>
+#include <phosphorus/core/log.h>
 
-int main()
+class Sandbox final : public ph::Application
 {
-    std::cout << "Hello world!\n";
-    return 0;
-}
+protected:
+    void update() override
+    {
+        ph::log_debug("Delta time = {}s", delta_time_sec());
+    }
+};
+
+PH_APP_MAIN(Sandbox);
