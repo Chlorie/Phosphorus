@@ -1,5 +1,6 @@
 {
     "name": "phosphorus",
+    "description": "Phosphorus engine",
     "version-string": "0.1.0",
     "dependencies": [
         "clu",
@@ -9,11 +10,29 @@
         "glad",
         {
             "name": "imgui",
-            "features": [
-                "docking-experimental",
-                "win32-binding",
-                "glfw-binding"
+            "features": ["docking-experimental"]
+        }
+    ],
+    "features": {
+        "windows": {
+            "description": "Build for Windows platform",
+            "dependencies": [
+                {
+                    "name": "imgui",
+                    "features": ["win32-binding"]
+                }
+            ]
+        },
+        "opengl": {
+            "description": "Build OpenGL backend",
+            "dependencies": [
+                "glfw3",
+                "glad",
+                {
+                    "name": "imgui",
+                    "features": ["opengl3-binding", "glfw-binding"]
+                }
             ]
         }
-    ]
+    }
 }

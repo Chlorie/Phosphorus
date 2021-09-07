@@ -1,5 +1,16 @@
 cmake_minimum_required(VERSION 3.14)
 
+if (WIN32)
+    list(APPEND VCPKG_MANIFEST_FEATURES "windows")
+else ()
+    message(FATAL_ERROR "This platform is not supported yet")
+endif ()
+
+option(PHOSPHORUS_OPENGL "Build OpenGL backend")
+if (PHOSPHORUS_OPENGL)
+    list(APPEND VCPKG_MANIFEST_FEATURES "opengl")
+endif ()
+
 project(phosphorus LANGUAGES CXX VERSION 0.1.0)
 
 set(CMAKE_SCRIPTS "${PROJECT_SOURCE_DIR}/cmake")

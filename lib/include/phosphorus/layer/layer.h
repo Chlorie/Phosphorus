@@ -104,6 +104,14 @@ namespace ph
         [[nodiscard]] void* data() noexcept { return ptr_; }
         [[nodiscard]] const void* data() const noexcept { return ptr_; }
 
+        void swap(Layer& other) noexcept
+        {
+            std::swap(vtable_, other.vtable_);
+            std::swap(ptr_, other.ptr_);
+            std::swap(name_, other.name_);
+        }
+        PH_API friend void swap(Layer& lhs, Layer& rhs) noexcept { lhs.swap(rhs); }
+
     private:
         const detail::LayerVTable* vtable_ = nullptr;
         void* ptr_ = nullptr;

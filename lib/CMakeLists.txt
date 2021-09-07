@@ -2,7 +2,10 @@ add_library(phosphorus)
 add_library(phosphorus::phosphorus ALIAS phosphorus)
 
 target_set_output_dirs(phosphorus)
-set_target_properties(phosphorus PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(phosphorus PROPERTIES 
+    LINKER_LANGUAGE CXX
+    DEFINE_SYMBOL ""
+)
 
 function (add_headers TGT)
     set(headers ${ARGN})
@@ -66,20 +69,28 @@ add_sources(SOURCES
     "layer/layer_stack.cpp"
 )
 
-find_package(clu CONFIG REQUIRED)
-find_package(glm CONFIG REQUIRED)
-find_package(spdlog CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
-find_package(glad CONFIG REQUIRED)
+if (WIN32)
+    target_compile_definitions(phosphorus PUBLIC PHOSPHORUS_WINDOWS)
+endif ()
 
-target_sources(phosphorus PRIVATE ${HEADERS} ${SOURCES} "include/phosphorus/core/entry_point.h")
-target_set_options(phosphorus)
+if (PHOSPHORUS_OPENGL)
+    target_compile_definitions(phosphorus PUBLIC PHOSPHORUS_OPENGL)
+endif ()
 
 if (BUILD_SHARED_LIBS)
     target_compile_definitions(phosphorus
         PRIVATE PH_EXPORT_SHARED
         PUBLIC PH_BUILD_SHARED)
 endif ()
+
+find_package(clu CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED)
+
+target_sources(phosphorus PRIVATE ${HEADERS} ${SOURCES})
+target_set_options(phosphorus)
 
 target_include_directories(phosphorus
 PUBLIC

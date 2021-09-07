@@ -36,6 +36,8 @@ namespace ph
         void set_event_callback(Fn&& callback) { callback_ = static_cast<Fn&&>(callback); }
         void set_vsync(bool enabled);
 
+        void* handle() const noexcept { return window_; }
+
     private:
         void* window_ = nullptr;
         Int2 size_;
