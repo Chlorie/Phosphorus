@@ -39,7 +39,8 @@ function (target_set_warnings TGT)
     set(GCC_WARNINGS
         ${CLANG_WARNINGS}
         -Wmisleading-indentation -Wduplicated-cond -Wduplicated-branches    
-        -Wlogical-op -Wuseless-cast)
+        -Wlogical-op -Wuseless-cast
+        -Wno-non-virtual-dtor)
         
     if (MSVC) # Visual Studio
         target_compile_options(${TGT} INTERFACE ${MSVC_WARNINGS}

@@ -26,6 +26,7 @@ namespace ph
     void Application::run()
     {
         using namespace std::literals;
+        using namespace literals;
         static constexpr auto first_delta_time = 17ms;
         PH_ENGINE_ASSERT(window_, "The window should be initialized before running the app");
         window_->set_event_callback(std::bind_front(&Application::propagate_event, this));
@@ -34,19 +35,20 @@ namespace ph
         {
             current_update_ = Clock::now();
             window_->poll_events();
+            window_->graphics_context().clear_color(0x39c5bb_rgb);
             update();
             for (Layer& layer : layer_stack_) layer.on_update();
-            window_->update();
+            window_->graphics_context().swap_buffers();
             last_update_ = current_update_;
         }
     }
 
     void Application::quit() { window_->close(); }
 
-    void Application::initialize_window(const clu::c_str_view title, const Int2 size, const RenderBackend backend)
+    void Application::initialize_window(
+        const clu::c_str_view title, const Int2 size, const RenderBackend backend)
     {
         window_.emplace(title, size, backend);
-        log_engine_info("Created window {} with size {}", title, size);
     }
 
     void Application::propagate_event(Event& ev)

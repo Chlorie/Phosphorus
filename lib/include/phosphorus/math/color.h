@@ -19,7 +19,13 @@ namespace ph
 
     namespace literals
     {
-        PH_API constexpr Color operator""_rgba(const uint64_t value) { return to_color(static_cast<uint32_t>(value)); }
-        PH_API constexpr Color operator""_rgb(const uint64_t value) { return to_color((static_cast<uint32_t>(value) << 8) + 0xffu); }
+        PH_API constexpr Color operator""_rgba(const unsigned long long value)
+        {
+            return to_color(static_cast<uint32_t>(value));
+        }
+        PH_API constexpr Color operator""_rgb(const unsigned long long value)
+        {
+            return to_color((static_cast<uint32_t>(value) << 8) + 0xffu);
+        }
     }
 }

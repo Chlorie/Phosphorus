@@ -7,7 +7,6 @@
         "spdlog",
         "glm",
         "glfw3",
-        "glad",
         {
             "name": "imgui",
             "features": ["docking-experimental"]
@@ -23,10 +22,12 @@
                 }
             ]
         },
+        "x11": {
+            "description": "Build for Linux platform, with X11 being the window system"
+        },
         "opengl": {
             "description": "Build OpenGL backend",
             "dependencies": [
-                "glfw3",
                 "glad",
                 {
                     "name": "imgui",

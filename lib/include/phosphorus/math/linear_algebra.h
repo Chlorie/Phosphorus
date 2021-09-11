@@ -46,15 +46,16 @@ namespace ph
     }
 }
 
-template <typename T, size_t Dim>
-struct fmt::formatter<glm::vec<Dim, T>> : formatter<std::string_view>
+template <typename T, glm::length_t Dim, glm::qualifier Q>
+struct fmt::formatter<glm::vec<Dim, T, Q>> : formatter<std::string_view>
 {
     template <typename FmtCtx>
-    auto format(const glm::vec<Dim, T>& vec, FmtCtx& context)
+    auto format(const glm::vec<Dim, T, Q>& vec, FmtCtx& context)
     {
+        constexpr auto size = static_cast<size_t>(Dim);
         return formatter<std::string_view>::format(
             fmt::format("({})",
-                fmt::join(std::span<const T, Dim>(glm::value_ptr(vec), Dim), ", ")),
+                fmt::join(std::span<const T, size>(glm::value_ptr(vec), size), ", ")),
             context);
     }
 };

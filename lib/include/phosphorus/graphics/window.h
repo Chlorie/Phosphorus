@@ -3,9 +3,9 @@
 #include <clu/c_str_view.h>
 
 #include "generic/render_backend.h"
+#include "generic/context.h"
 #include "../core/export.h"
 #include "../event/event.h"
-#include "../math/color.h"
 #include "../math/linear_algebra.h"
 
 namespace ph
@@ -26,22 +26,23 @@ namespace ph
         void close();
         bool should_close() const;
         void poll_events();
-        void clear_color(Color color);
-        void update();
 
-        Int2 size() const noexcept { return size_; }
-        Float2 sizef() const noexcept { return Float2(size_); }
+        [[nodiscard]] Int2 size() const noexcept { return size_; }
+        [[nodiscard]] Float2 sizef() const noexcept { return Float2(size_); }
 
         template <std::invocable<Event&> Fn>
         void set_event_callback(Fn&& callback) { callback_ = static_cast<Fn&&>(callback); }
         void set_vsync(bool enabled);
 
-        void* handle() const noexcept { return window_; }
+        [[nodiscard]] void* handle() const noexcept { return window_; }
+        [[nodiscard]] gfx::Context& graphics_context() noexcept { return context_; }
+        [[nodiscard]] const gfx::Context& graphics_context() const noexcept { return context_; }
 
     private:
         void* window_ = nullptr;
         Int2 size_;
         std::function<void(Event&)> callback_;
+        gfx::Context context_;
 
         void set_glfw_callbacks() const;
     };

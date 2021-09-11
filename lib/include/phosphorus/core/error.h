@@ -29,7 +29,7 @@ namespace ph
     catch (const std::exception& e) { ::ph::fatal_error(e.what(), true); } \
     catch (...) { ::ph::fatal_error("unknown error", true); } (void)0
 
-#ifdef _DEBUG
+#ifndef NDEBUG
     constexpr bool is_debug = true;
 #   define PH_ASSERT(expr, msg) while (!(expr)) ::ph::assertion_failure(#expr, msg, false)
 #   define PH_ENGINE_ASSERT(expr, msg) while (!(expr)) ::ph::assertion_failure(#expr, msg, true)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <functional>
 #include <clu/concepts.h>
 #include <clu/flags.h>
 #include <clu/meta_list.h>

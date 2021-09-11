@@ -1,6 +1,5 @@
 #include "phosphorus/graphics/window.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "phosphorus/core/error.h"
@@ -24,23 +23,39 @@ namespace ph
                     fatal_error("Failed to initialize GLFW", true);
             }
 
-            ~GlfwLifetime() noexcept { glfwTerminate(); }
+            ~GlfwLifetime() noexcept
+            {
+                glfwTerminate();
+            }
         };
+
+        GLFWwindow* init_handle(
+            const clu::c_str_view title, const Int2 size,
+            const RenderBackend backend)
+        {
+            using enum RenderBackend;
+            static GlfwLifetime glfw;
+            switch (backend)
+            {
+#ifdef PHOSPHORUS_OPENGL
+                case opengl:
+                    if constexpr (is_debug)
+                        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+                    break;
+#endif
+                default: fatal_error("Selected render backend is not supported in this build", true);
+            }
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+            return glfwCreateWindow(size.x, size.y, title.c_str(), nullptr, nullptr);
+        }
     }
 
-    Window::Window(const clu::c_str_view title, const Int2 size, const RenderBackend backend): size_(size)
+    Window::Window(const clu::c_str_view title, const Int2 size, const RenderBackend backend):
+        window_(init_handle(title, size, backend)), size_(size), context_(window_, backend)
     {
-        using enum RenderBackend;
-        static GlfwLifetime glfw;
-        switch (backend)
-        {
-            case opengl: break;
-            default: throw_exception("Selected render backend is not supported yet", true);
-        }
-        glfwWindowHint(GLFW_RESIZABLE, true);
-        window_ = glfwCreateWindow(size.x, size.y, title.c_str(), nullptr, nullptr);
         glfwSetWindowUserPointer(cast_window(window_), this);
         set_glfw_callbacks();
+        log_engine_info("Created window with size {}, title {}", size, title);
     }
 
     Window::~Window() noexcept
@@ -52,7 +67,11 @@ namespace ph
     Window::Window(Window&& other) noexcept:
         window_(std::exchange(other.window_, nullptr)),
         size_(other.size_),
-        callback_(std::move(other.callback_)) {}
+        callback_(std::move(other.callback_)),
+        context_(std::move(other.context_))
+    {
+        glfwSetWindowUserPointer(cast_window(window_), this);
+    }
 
     Window& Window::operator=(Window&& other) noexcept
     {
@@ -61,7 +80,9 @@ namespace ph
             glfwDestroyWindow(cast_window(window_));
         window_ = std::exchange(other.window_, nullptr);
         size_ = other.size_;
+        callback_ = std::move(other.callback_);
         glfwSetWindowUserPointer(cast_window(window_), this);
+        context_ = std::move(other.context_);
         return *this;
     }
 
@@ -72,14 +93,12 @@ namespace ph
         glfwSetWindowUserPointer(cast_window(other.window_), &other);
         std::swap(size_, other.size_);
         std::swap(callback_, other.callback_);
+        std::swap(context_, other.context_);
     }
 
     void Window::close() { glfwSetWindowShouldClose(cast_window(window_), true); }
     bool Window::should_close() const { return glfwWindowShouldClose(cast_window(window_)); }
     void Window::poll_events() { glfwPollEvents(); }
-
-    void Window::clear_color(Color) {} // TODO: implement
-    void Window::update() {} // TODO: implement
     void Window::set_vsync(const bool enabled) { glfwSwapInterval(enabled ? 1 : 0); }
 
     void Window::set_glfw_callbacks() const

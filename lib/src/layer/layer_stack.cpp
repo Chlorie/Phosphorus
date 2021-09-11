@@ -1,6 +1,7 @@
 #include "phosphorus/layer/layer_stack.h"
 
 #include <ranges>
+#include <algorithm>
 #include <fmt/core.h>
 
 #include "phosphorus/core/error.h"
@@ -36,7 +37,7 @@ namespace ph
     {
         const auto iter = std::ranges::find(layers_, ptr, [](const Layer& layer) { return layer.data(); });
         if (iter == layers_.end())
-            throw_exception(fmt::format("Cannot find layer with pointer at {:x} in the layer stack", ptr), true);
+            throw_exception(fmt::format("Cannot find layer with pointer at {} in the layer stack", ptr), true);
         if (iter - layers_.begin() < overlay_index_) overlay_index_--;
         Layer layer = std::move(*iter);
         layers_.erase(iter);
@@ -48,7 +49,7 @@ namespace ph
     {
         const auto iter = std::ranges::find(layers_, name, &Layer::name);
         if (iter == layers_.end())
-            throw_exception(fmt::format("Cannot find layer with name {:x} in the layer stack", name), true);
+            throw_exception(fmt::format("Cannot find layer with name {} in the layer stack", name), true);
         if (iter - layers_.begin() < overlay_index_) overlay_index_--;
         Layer layer = std::move(*iter);
         layers_.erase(iter);

@@ -7,18 +7,7 @@ set_target_properties(phosphorus PROPERTIES
     DEFINE_SYMBOL ""
 )
 
-function (add_headers TGT)
-    set(headers ${ARGN})
-    list(TRANSFORM headers PREPEND "include/phosphorus/")
-    set(${TGT} ${headers} PARENT_SCOPE)
-endfunction ()
-function (add_sources TGT)
-    set(sources ${ARGN})
-    list(TRANSFORM sources PREPEND "src/")
-    set(${TGT} ${sources} PARENT_SCOPE)
-endfunction ()
-
-add_headers(HEADERS
+set(HEADERS
     # Header files here (relative to ./include/phosphorus/)
     "phosphorus.h"
 
@@ -35,6 +24,8 @@ add_headers(HEADERS
     "event/window_events.h"
 
     "graphics/window.h"
+    "graphics/generic/buffer.h"
+    "graphics/generic/context.h"
     "graphics/generic/render_backend.h"
 
     "input/input.h"
@@ -50,8 +41,10 @@ add_headers(HEADERS
 
     "utils/chrono.h"
     "utils/format.h"
+    "utils/pimpl.h"
+    "utils/virtual_base.h"
 )
-add_sources(SOURCES
+set(SOURCES
     # Source files here (relative to ./src/)
     "core/application.cpp"
     "core/error.cpp"
@@ -62,6 +55,10 @@ add_sources(SOURCES
     "event/window_events.cpp"
     
     "graphics/window.cpp"
+    "graphics/generic/buffer.cpp"
+    "graphics/generic/buffer_base.h"
+    "graphics/generic/context.cpp"
+    "graphics/generic/context_base.h"
 
     "input/key.cpp"
     "input/mouse_button.cpp"
@@ -71,11 +68,22 @@ add_sources(SOURCES
 
 if (WIN32)
     target_compile_definitions(phosphorus PUBLIC PHOSPHORUS_WINDOWS)
+elseif (UNIX AND NOT APPLE)
+    target_compile_definitions(phosphorus PUBLIC PHOSPHORUS_LINUX)
 endif ()
 
 if (PHOSPHORUS_OPENGL)
     target_compile_definitions(phosphorus PUBLIC PHOSPHORUS_OPENGL)
+    list(APPEND SOURCES
+        "graphics/opengl/buffer.h"
+        "graphics/opengl/buffer.cpp"
+        "graphics/opengl/context.h"
+        "graphics/opengl/context.cpp"
+    )
 endif ()
+
+list(TRANSFORM HEADERS PREPEND "include/phosphorus/")
+list(TRANSFORM SOURCES PREPEND "src/")
 
 if (BUILD_SHARED_LIBS)
     target_compile_definitions(phosphorus

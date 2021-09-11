@@ -23,22 +23,22 @@ namespace ph
         Application& operator=(const Application&) = delete;
         Application& operator=(Application&&) = delete;
 
-        static Application& instance();
+        [[nodiscard]] static Application& instance();
         void run();
         void quit();
 
-        Duration time_since_start() const { return Clock::now() - start_time_; }
-        float seconds_since_start() const { return to_seconds(time_since_start()); }
-        Duration delta_time() const { return current_update_ - last_update_; }
-        float delta_time_sec() const { return to_seconds(delta_time()); }
+        [[nodiscard]] Duration time_since_start() const { return Clock::now() - start_time_; }
+        [[nodiscard]] float seconds_since_start() const { return to_seconds(time_since_start()); }
+        [[nodiscard]] Duration delta_time() const { return current_update_ - last_update_; }
+        [[nodiscard]] float delta_time_sec() const { return to_seconds(delta_time()); }
 
-        Window& window() { return *window_; }
-        const Window& window() const { return *window_; }
-        LayerStack& layer_stack() { return layer_stack_; }
-        const LayerStack& layer_stack() const { return layer_stack_; }
+        [[nodiscard]] Window& window() { return *window_; }
+        [[nodiscard]] const Window& window() const { return *window_; }
+        [[nodiscard]] LayerStack& layer_stack() { return layer_stack_; }
+        [[nodiscard]] const LayerStack& layer_stack() const { return layer_stack_; }
 
     protected:
-        virtual void update() = 0;
+        virtual void update() {}
         void initialize_window(clu::c_str_view title, Int2 size, RenderBackend backend);
 
     private:
