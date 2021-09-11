@@ -7,10 +7,10 @@ public:
     {
         ev.dispatch([](const ph::KeyPressedEvent& kpe)
         {
-            if (kpe.key() == ph::Key::n)
+            if (kpe.key() == ph::Key::escape)
             {
-                ph::Application::instance().window().set_vsync(false);
-                ph::log_debug("Disabled VSync");
+                ph::log_debug("Escape pressed, quitting the application");
+                ph::Application::instance().quit();
             }
         });
     }
